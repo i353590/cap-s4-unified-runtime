@@ -3,7 +3,7 @@ using API_BUSINESS_PARTNER as BUPA_API from './external/API_BUSINESS_PARTNER';
 namespace service.businessPartnerValidation;
  
  
-service SalesService  {
+service SalesService @(requires:'authenticated-user') {
    @odata.draft.enabled
    entity Notifications as projection on my.Notifications;
    entity Addresses as projection on my.Addresses;
