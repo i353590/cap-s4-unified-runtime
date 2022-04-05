@@ -33,7 +33,9 @@ module.exports = async (srv) => {
     const result = await cds.run(INSERT.into(Notifications).entries({businessPartnerId:BUSINESSPARTNER, verificationStatus_code:'N', businessPartnerName:bpEntity.businessPartnerName}));
     const address = await bupaSrv.run(SELECT.one(BusinessPartnerAddress).where({businessPartnerId: BUSINESSPARTNER}));
     // for the address to notification association - extra field
-    if(address){
+
+    console.log("Address entity here == ", address);
+    if(address && address.addressId){
       const notificationObj = await cds.run(SELECT.one(Notifications).columns("ID").where({businessPartnerId: BUSINESSPARTNER}));
       address.notifications_ID=notificationObj.ID;
       const res = await cds.run(INSERT.into(Addresses).entries(address));
