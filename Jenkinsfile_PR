@@ -41,7 +41,7 @@ node{
 					appId=`cf app BusinessPartnerValidation-srv --guid`
 					`cf curl /v2/apps/$appId/env > tests/testscripts/util/appEnv.json`
 					npm install --only=dev
-					npm test
+					npm run-script test:integration
 				'''
 			}
 	    }
