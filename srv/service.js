@@ -1,7 +1,7 @@
 const cds = require('@sap/cds');
 
 
-module.exports = async (srv) => {
+module.exports = cds.service.impl(async (srv) => {
   const {BusinessPartnerAddress, Notifications, Addresses, BusinessPartner} = srv.entities;
   const bupaSrv = await cds.connect.to("API_BUSINESS_PARTNER");
   const messaging = await cds.connect.to('messaging')
@@ -112,4 +112,4 @@ module.exports = async (srv) => {
     
   }
   
-};
+});
