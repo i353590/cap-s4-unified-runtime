@@ -21,9 +21,10 @@
     },
     "scripts": {
         "start": "npx cds run",
-        "test": "npm install sqlite3 --save-dev && npm run test:unit",
-        "test:integration": "mocha tests/mocha.test.js --timeout 28000",
-        "test:unit": "jest tests/unit/BPValidation.test.js",
+        "test": "npm install sqlite3 --save-dev && npm run test:integration",
+        "test:rest-api": "mocha tests/rest-api/mocha.test.js --timeout 28000",
+        "test:integration": "jest tests/integration/BPValidation.test.js",
+        "test:unit": "jest tests/unit/service.test.js",
         "test:legacy": "mocha tests/chai-test.js --timeout 15000 --exit"
     },
     "devDependencies": {
