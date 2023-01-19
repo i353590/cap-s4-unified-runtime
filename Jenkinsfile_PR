@@ -26,22 +26,30 @@ node{
 		 
 	  	}
 
+		stage('Test: Unit'){
+			sh "npm run-script test:unit"
+		}
+
+		stage('Test: Integration') {
+			sh "npm run-script test"
+		}
+
 	  	stage('Deploy Mock'){
 			setupCommonPipelineEnvironment script:this
 			cloudFoundryDeploy script:this, deployTool:'cf_native', cloudFoundry: [manifest: 'tests/mocks/gen/srv/manifest.yml']
 			cloudFoundryDeploy script:this, deployTool:'mtaDeployPlugin'  	
         }
 
-		stage('Mock Integration Test'){
+		stage('Test: REST-API'){
 			catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
 				withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'pusercf', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 					sh "cf login -a ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.apiEndpoint} -u $USERNAME -p $PASSWORD -o ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.org} -s ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.space}"
 				}
 				sh '''
 					appId=`cf app BusinessPartnerValidation-srv --guid`
-					`cf curl /v2/apps/$appId/env > tests/testscripts/util/appEnv.json`
+					`cf curl /v2/apps/$appId/env > tests/rest-api/testscripts/util/appEnv.json`
 					npm install --only=dev
-					npm test
+					npm run-script test:rest-api
 				'''
 			}
 	    }
