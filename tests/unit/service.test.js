@@ -1,7 +1,7 @@
 const SalesService = require('../../srv/service.js');
 
 
-describe("Unit Test suite for methods", ()=> {
+describe("Unit Test suite for methods", () => {
     let salesService, bupaSrv, cdsSpy, LOG;
 
     beforeAll(() => {
@@ -10,7 +10,8 @@ describe("Unit Test suite for methods", ()=> {
         bupaSrv.run = jest.fn();
 
         jest.spyOn(cds.ql, 'UPDATE').mockImplementation(() => {
-            return { "set": jest.fn().mockImplementation(() => {
+            return {
+                "set": jest.fn().mockImplementation(() => {
                     return {
                         "where": jest.fn()
                     }
@@ -28,8 +29,8 @@ describe("Unit Test suite for methods", ()=> {
         jest.clearAllMocks();
     });
 
-    it("bupaSrv .toBeCalled() once on emitEvent", async ()=> {
-        
+    it("bupaSrv .toBeCalled() once on emitEvent", async () => {
+
         const payload = {
             "businessPartnerId": "123",
             "addressId": "1",
@@ -41,14 +42,14 @@ describe("Unit Test suite for methods", ()=> {
         expect(bupaSrv.run).toBeCalled()
     })
 
-    it("bupaSrv .toBeCalled() twice on emitEvent", async ()=> {
-        
+    it("bupaSrv .toBeCalled() twice on emitEvent", async () => {
+
         const payload = {
             "businessPartnerId": "123",
             "addressId": "1",
             "searchTerm1": "V",
-            "streetName":"XX",
-            "postalCode":"XX",
+            "streetName": "XX",
+            "postalCode": "XX",
             "isModified": true
         }
         cdsSpy = jest.spyOn(cds, 'run').mockResolvedValue(payload)
@@ -58,13 +59,13 @@ describe("Unit Test suite for methods", ()=> {
     })
 
     it("readMsg returns correct BUSINESSPARTNER for s/4Hana 2019", async () => {
-        const msg = {data: {KEY: [{BUSINESSPARTNER: "1234"}]}};
+        const msg = { data: { KEY: [{ BUSINESSPARTNER: "1234" }] } };
         let bp = salesService.readMsg(msg)
         expect(bp).toBe("1234")
     })
 
     it("readMsg returns correct BUSINESSPARTNER for s/4Hana 2020 and above", async () => {
-        const msg = {data: {BusinessPartner: "1234"}, headers: {specversion: "1.0"}};
+        const msg = { data: { BusinessPartner: "1234" }, headers: { specversion: "1.0" } };
         let bp = salesService.readMsg(msg)
         expect(bp).toBe("1234")
     })
