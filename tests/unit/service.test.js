@@ -46,6 +46,9 @@ describe("Unit Test suite for methods", ()=> {
         const payload = {
             "businessPartnerId": "123",
             "addressId": "1",
+            "searchTerm1": "V",
+            "streetName":"XX",
+            "postalCode":"XX",
             "isModified": true
         }
         cdsSpy = jest.spyOn(cds, 'run').mockResolvedValue(payload)
