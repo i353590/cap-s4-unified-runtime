@@ -1,0 +1,738 @@
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/network-policy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: dummy-businesspartnervalidation-srv
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: istio-ingressgateway
+      namespaceSelector:
+        matchLabels:
+          name: istio-system
+
+  policyTypes:
+  - Ingress
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: businesspartnervalidation-srv
+      app.kubernetes.io/instance: dummy
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/pod-disruption-budget.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dummy-businesspartnervalidation-srv
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  maxUnavailable: 10%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: businesspartnervalidation-srv
+      app.kubernetes.io/instance: dummy
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dummy-businesspartnervalidation-srv
+---
+# Source: businesspartnervalidation/charts/db/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dummy-db
+---
+# Source: businesspartnervalidation/charts/kyma-s4-html5-app-deployer/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dummy-kyma-s4-html5-app-deployer
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dummy-businesspartnervalidation-srv
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+  name: dummy-businesspartnervalidation-srv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: businesspartnervalidation-srv
+      app.kubernetes.io/instance: dummy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: businesspartnervalidation-srv
+        app.kubernetes.io/instance: dummy
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/businesspartnervalidation-srv: runtime/default
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: dummy-businesspartnervalidation-srv
+      containers:
+      - image: s700136/kyma-srv:latest
+        name: businesspartnervalidation-srv
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        envFrom:
+        env:
+        - name: SERVICE_BINDING_ROOT
+          value: /bindings
+        - name: PORT
+          value: "8080"
+        - name: TMPDIR
+          value: /tmp
+        - name: exit
+          value: "1"
+        - name: APPLICATION_NAME
+          value: dummy-businesspartnervalidation-srv
+        - name: APPLICATION_URI
+          value: dummy-businesspartnervalidation-srv
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        startupProbe:
+          httpGet:
+            path: /
+            port: http
+          failureThreshold: 15
+          periodSeconds: 2
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: bindings-root
+          mountPath: /bindings
+        
+        - mountPath: /bindings/businesspartnervalidation-cs/
+          name: "businesspartnervalidation-cs"
+          readOnly: true
+        - mountPath: /bindings/businesspartnervalidation-db/
+          name: "businesspartnervalidation-db"
+          readOnly: true
+        - mountPath: /bindings/businesspartnervalidation-dest/
+          name: "businesspartnervalidation-dest"
+          readOnly: true
+        - mountPath: /bindings/businesspartnervalidation-ems/
+          name: "businesspartnervalidation-ems"
+          readOnly: true
+        - mountPath: /bindings/businesspartnervalidation-logs/
+          name: "businesspartnervalidation-logs"
+          readOnly: true
+        - mountPath: /bindings/businesspartnervalidation-xsuaa/
+          name: "businesspartnervalidation-xsuaa"
+          readOnly: true
+        resources:
+          limits:
+            memory: 256mb
+          requests:
+            cpu: 63m
+            memory: 256mb
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+          seccompProfile:
+            type: RuntimeDefault
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: businesspartnervalidation-srv
+            app.kubernetes.io/instance: dummy
+        maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: businesspartnervalidation-srv
+            app.kubernetes.io/instance: dummy
+        maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+      volumes:
+      - emptyDir: {}
+        name: tmp
+      - emptyDir: {}
+        name: bindings-root
+      
+      - name: businesspartnervalidation-cs
+        secret:
+          secretName: dummy-businesspartnervalidation-srv-businesspartnervalidation-cs
+      - name: businesspartnervalidation-db
+        secret:
+          secretName: dummy-businesspartnervalidation-srv-businesspartnervalidation-db
+      - name: businesspartnervalidation-dest
+        secret:
+          secretName: dummy-businesspartnervalidation-srv-businesspartnervalidation-dest
+      - name: businesspartnervalidation-ems
+        secret:
+          secretName: dummy-businesspartnervalidation-srv-businesspartnervalidation-ems
+      - name: businesspartnervalidation-logs
+        secret:
+          secretName: dummy-businesspartnervalidation-srv-businesspartnervalidation-logs
+      - name: businesspartnervalidation-xsuaa
+        secret:
+          secretName: dummy-businesspartnervalidation-srv-businesspartnervalidation-xsuaa
+---
+# Source: businesspartnervalidation/charts/db/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    sidecar.istio.io/inject: "false"
+    helm.sh/revision: "1"
+    helm.sh/chart: db-0.5.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: db
+    app.kubernetes.io/instance: dummy
+  name: dummy-db-0001
+spec:
+  completions: 1
+  manualSelector: false
+  parallelism: 1
+  ttlSecondsAfterFinished: 1209600
+  template:
+    metadata:
+      labels:
+        sidecar.istio.io/inject: "false"
+        helm.sh/revision: "1"
+        helm.sh/chart: db-0.5.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: db
+        app.kubernetes.io/instance: dummy
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/db: runtime/default
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: dummy-db
+      containers:
+      - image: s700136/kyma-db:latest
+        name: db
+        env:
+        - name: EXIT
+          value: "1"
+        - name: EXIT_PROCESS_AFTER_UPLOAD
+          value: "true"
+        - name: TMPDIR
+          value: /tmp
+        - name: SERVICE_BINDING_ROOT
+          value: /bindings
+        envFrom:
+        resources:
+          limits:
+            memory: 128mb
+          requests:
+            cpu: 32m
+            memory: 128mb
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+        
+        - mountPath: /bindings/businesspartnervalidation-db/
+          name: businesspartnervalidation-db-binding
+          readOnly: true
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      
+      - name: businesspartnervalidation-db-binding
+        secret:
+          secretName: dummy-db-businesspartnervalidation-db
+---
+# Source: businesspartnervalidation/charts/kyma-s4-html5-app-deployer/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    sidecar.istio.io/inject: "false"
+    helm.sh/revision: "1"
+    helm.sh/chart: kyma-s4-html5-app-deployer-0.5.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyma-s4-html5-app-deployer
+    app.kubernetes.io/instance: dummy
+  name: dummy-kyma-s4-html5-app-deployer-0001
+spec:
+  completions: 1
+  manualSelector: false
+  parallelism: 1
+  ttlSecondsAfterFinished: 1209600
+  template:
+    metadata:
+      labels:
+        sidecar.istio.io/inject: "false"
+        helm.sh/revision: "1"
+        helm.sh/chart: kyma-s4-html5-app-deployer-0.5.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: kyma-s4-html5-app-deployer
+        app.kubernetes.io/instance: dummy
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/kyma-s4-html5-app-deployer: runtime/default
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: dummy-kyma-s4-html5-app-deployer
+      containers:
+      - image: s700136/kyma-html:latest
+        name: kyma-s4-html5-app-deployer
+        env:
+        - name: EXIT
+          value: "1"
+        - name: EXIT_PROCESS_AFTER_UPLOAD
+          value: "true"
+        - name: TMPDIR
+          value: /tmp
+        - name: SERVICE_BINDING_ROOT
+          value: /bindings
+        - name: BACKEND_DESTINATIONS
+          valueFrom:
+            secretKeyRef:
+              key: BACKEND_DESTINATIONS
+              name: backend-destinations
+        - name: SAP_CLOUD_SERVICE
+          value: com.sap.bp.BusinessPartners.one
+        - name: SUBACCOUNT_LEVEL_DESTINATION
+          value: "true"
+        envFrom:
+        resources:
+          limits:
+            memory: 1G
+          requests:
+            cpu: 250m
+            memory: 1G
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+        
+        - mountPath: /bindings/businesspartnervalidation-dest/
+          name: businesspartnervalidation-dest-binding
+          readOnly: true
+        - mountPath: /bindings/businesspartnervalidation-html5-repo-host/
+          name: businesspartnervalidation-html5-repo-host-binding
+          readOnly: true
+        - mountPath: /bindings/businesspartnervalidation-xsuaa/
+          name: businesspartnervalidation-xsuaa-binding
+          readOnly: true
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      
+      - name: businesspartnervalidation-dest-binding
+        secret:
+          secretName: dummy-kyma-s4-html5-app-deployer-businesspartnervalidation-dest
+      - name: businesspartnervalidation-html5-repo-host-binding
+        secret:
+          secretName: dummy-kyma-s4-html5-app-deployer-businesspartnervalidation-html5-repo-host
+      - name: businesspartnervalidation-xsuaa-binding
+        secret:
+          secretName: dummy-kyma-s4-html5-app-deployer-businesspartnervalidation-xsuaa
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/api-rule.yaml
+apiVersion: gateway.kyma-project.io/v1beta1
+kind: APIRule
+metadata:
+  name: dummy-businesspartnervalidation-srv
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  gateway: kyma-gateway.kyma-system.svc.cluster.local
+  host: dummy-businesspartnervalidation-srv-default
+  service:
+    name: dummy-businesspartnervalidation-srv
+    port: 8080
+  rules:
+      - accessStrategies:
+        - handler: allow
+        methods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - HEAD
+        path: /.*
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-businesspartnervalidation-srv-businesspartnervalidation-cs
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-cs
+  secretKey: credentials
+  credentialsRotationPolicy: 
+    enabled: false
+    rotatedBindingTTL: 24h
+    rotationFrequency: 720h
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-businesspartnervalidation-srv-businesspartnervalidation-db
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-db
+  secretKey: credentials
+  credentialsRotationPolicy: 
+    enabled: false
+    rotatedBindingTTL: 24h
+    rotationFrequency: 720h
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-businesspartnervalidation-srv-businesspartnervalidation-dest
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-dest
+  secretKey: credentials
+  credentialsRotationPolicy: 
+    enabled: false
+    rotatedBindingTTL: 24h
+    rotationFrequency: 720h
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-businesspartnervalidation-srv-businesspartnervalidation-ems
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-ems
+  secretKey: credentials
+  credentialsRotationPolicy: 
+    enabled: false
+    rotatedBindingTTL: 24h
+    rotationFrequency: 720h
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-businesspartnervalidation-srv-businesspartnervalidation-logs
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-logs
+  secretKey: credentials
+  credentialsRotationPolicy: 
+    enabled: false
+    rotatedBindingTTL: 24h
+    rotationFrequency: 720h
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-srv/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-businesspartnervalidation-srv-businesspartnervalidation-xsuaa
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-srv-0.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-srv
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-xsuaa
+  secretKey: credentials
+  credentialsRotationPolicy: 
+    enabled: false
+    rotatedBindingTTL: 24h
+    rotationFrequency: 720h
+---
+# Source: businesspartnervalidation/charts/db/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-db-businesspartnervalidation-db
+  labels:
+    sidecar.istio.io/inject: "false"
+    helm.sh/revision: "1"
+    helm.sh/chart: db-0.5.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: db
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-db
+  secretKey: credentials
+---
+# Source: businesspartnervalidation/charts/kyma-s4-html5-app-deployer/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-kyma-s4-html5-app-deployer-businesspartnervalidation-dest
+  labels:
+    sidecar.istio.io/inject: "false"
+    helm.sh/revision: "1"
+    helm.sh/chart: kyma-s4-html5-app-deployer-0.5.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyma-s4-html5-app-deployer
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-dest
+  secretKey: credentials
+---
+# Source: businesspartnervalidation/charts/kyma-s4-html5-app-deployer/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-kyma-s4-html5-app-deployer-businesspartnervalidation-html5-repo-host
+  labels:
+    sidecar.istio.io/inject: "false"
+    helm.sh/revision: "1"
+    helm.sh/chart: kyma-s4-html5-app-deployer-0.5.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyma-s4-html5-app-deployer
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-html5-repo-host
+  secretKey: credentials
+---
+# Source: businesspartnervalidation/charts/kyma-s4-html5-app-deployer/templates/service-binding.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: dummy-kyma-s4-html5-app-deployer-businesspartnervalidation-xsuaa
+  labels:
+    sidecar.istio.io/inject: "false"
+    helm.sh/revision: "1"
+    helm.sh/chart: kyma-s4-html5-app-deployer-0.5.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyma-s4-html5-app-deployer
+    app.kubernetes.io/instance: dummy
+spec:
+  serviceInstanceName: businesspartnervalidation-xsuaa
+  secretKey: credentials
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-cs/templates/serviceinstance.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-cs-0.3.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-cs
+    app.kubernetes.io/instance: dummy
+  name: businesspartnervalidation-cs
+spec:
+  serviceOfferingName: connectivity
+  servicePlanName: lite
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-db/templates/serviceinstance.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-db-0.3.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-db
+    app.kubernetes.io/instance: dummy
+  name: businesspartnervalidation-db
+spec:
+  serviceOfferingName: hana
+  servicePlanName: hdi-shared
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-dest/templates/serviceinstance.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-dest-0.3.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-dest
+    app.kubernetes.io/instance: dummy
+  name: businesspartnervalidation-dest
+spec:
+  serviceOfferingName: destination
+  servicePlanName: lite
+  parameters:
+    html5runtime_enabled: true
+    init_data:
+      instance:
+        destinations:
+        - authentication: noauthentication
+          name: ui5
+          proxytype: internet
+          type: http
+          url: https://ui5.sap.com
+        existing_destinations_policy: update
+    version: 1.0.0
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-ems/templates/serviceinstance.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-ems-0.3.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-ems
+    app.kubernetes.io/instance: dummy
+  name: businesspartnervalidation-ems
+spec:
+  serviceOfferingName: enterprise-messaging
+  servicePlanName: default
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-html5-repo-host/templates/serviceinstance.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-html5-repo-host-0.3.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-html5-repo-host
+    app.kubernetes.io/instance: dummy
+  name: businesspartnervalidation-html5-repo-host
+spec:
+  serviceOfferingName: html5-apps-repo
+  servicePlanName: app-host
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-logs/templates/serviceinstance.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-logs-0.3.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-logs
+    app.kubernetes.io/instance: dummy
+  name: businesspartnervalidation-logs
+spec:
+  serviceOfferingName: application-logs
+  servicePlanName: lite
+---
+# Source: businesspartnervalidation/charts/businesspartnervalidation-xsuaa/templates/serviceinstance.yaml
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  labels:
+    helm.sh/revision: "1"
+    helm.sh/chart: businesspartnervalidation-xsuaa-0.3.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: businesspartnervalidation-xsuaa
+    app.kubernetes.io/instance: dummy
+  name: businesspartnervalidation-xsuaa
+spec:
+  serviceOfferingName: xsuaa
+  servicePlanName: application
+  parameters:
+    role-templates:
+    - description: uaa
+      name: token_exchange
+      scope-references:
+      - uaa.user
+    scopes:
+    - description: uaa
+      name: uaa.user
+    tenant-mode: dedicated
+    xsappname: businesspartnervalidation

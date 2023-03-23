@@ -1,0 +1,13 @@
+[
+    {
+        "Name": "cloud-s4-extension-cap-sample-srv",
+        "Description": "Custom logic on Kyma APP",
+        "Type": "HTTP",
+        "ProxyType": "Internet",
+        "Authentication": "NoAuthentication",
+        "URL": "https://s4-new-businesspartnervalidation-srv-cl.c-835c50f.stage.kyma.ondemand.com",
+        "HTML5.ForwardAuthToken": true,
+        "strictSSL": true,
+        "sap.cloud.service": "com.sap.bp.BusinessPartners.one"
+    }
+]

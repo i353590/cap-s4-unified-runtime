@@ -1,5 +1,5 @@
 applications:
-  - name: BusinessPartnerValidation-srv
+  - name: businesspartnervalidation-srv
     path: .
     memory: 256M
     buildpacks:

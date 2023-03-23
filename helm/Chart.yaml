@@ -1,0 +1,65 @@
+name: businesspartnervalidation
+version: 1.0.0
+dependencies:
+    - name: web-application
+      version: '>=0.5.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: businesspartnervalidation-srv
+      tags:
+        - web-application
+    - name: content-deployment
+      version: '>=0.3.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: db
+      tags:
+        - content-deployment
+    - name: content-deployment
+      version: '>=0.3.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: kyma-s4-html5-app-deployer
+      tags:
+        - content-deployment
+    - name: service-instance
+      version: '>0.0.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: businesspartnervalidation-db
+      tags:
+        - service-instance
+    - name: service-instance
+      version: '>0.0.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: businesspartnervalidation-xsuaa
+      tags:
+        - service-instance
+    - name: service-instance
+      version: '>0.0.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: businesspartnervalidation-dest
+      tags:
+        - service-instance
+    - name: service-instance
+      version: '>0.0.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: businesspartnervalidation-ems
+      tags:
+        - service-instance
+    - name: service-instance
+      version: '>0.0.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: businesspartnervalidation-cs
+      tags:
+        - service-instance
+    # - name: service-instance
+    #   version: '>0.0.0'
+    #   repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+    #   alias: businesspartnervalidation-logs
+    #   tags:
+    #     - service-instance
+    - name: service-instance
+      version: '>0.0.0'
+      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+      alias: businesspartnervalidation-html5-repo-host
+      tags:
+        - service-instance
+type: application
+apiVersion: v2

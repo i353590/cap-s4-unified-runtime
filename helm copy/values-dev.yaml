@@ -1,0 +1,24 @@
+global:
+    image:
+        registry: s700136
+tags:
+    service-instance: true
+businesspartnervalidation-srv:
+    image:
+        repository: businesspartnervalidation-srv
+        tag: latest
+db:
+    image:
+        repository: db
+        tag: latest
+kyma-s4-html5-app-deployer:
+    env:
+        SAP_CLOUD_SERVICE : "com.sap.bp.BusinessPartners.one"
+        SUBACCOUNT_LEVEL_DESTINATION: "true"
+        BACKEND_DESTINATIONS:
+            secretKeyRef:
+                name: backend-destinations
+                key: BACKEND_DESTINATIONS
+    image:
+        repository: kyma-s4-html5-app-deployer
+        tag: latest

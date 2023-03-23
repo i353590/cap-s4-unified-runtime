@@ -1,7 +1,7 @@
 const cred =  require("./appEnv");
 const vcap = cred.system_env_json.VCAP_SERVICES;
 const appenv = cred.application_env_json.VCAP_APPLICATION;
-const topicName = "refapps/bpems/abc/BusinessPartnerValidation-srv/1234";
+const topicName = "refapps/bpems/abc/businesspartnervalidation-srv/1234";
 let mockserverurl = appenv.application_uris[0].split(".");
 mockserverurl[0] = "businesspartnervalidation-srv-mocks";
 mockserverurl = mockserverurl.join(".");

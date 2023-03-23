@@ -1,0 +1,139 @@
+tags:
+    service-instance: true
+businesspartnervalidation-cs:
+    serviceOfferingName: connectivity
+    servicePlanName: connectivity_proxy
+    fullnameOverride: businesspartnervalidation-cs
+businesspartnervalidation-db:
+    serviceOfferingName: hana
+    servicePlanName: hdi-shared
+    fullnameOverride: businesspartnervalidation-db
+businesspartnervalidation-dest:
+    serviceOfferingName: destination
+    servicePlanName: lite
+    parameters:
+        HTML5Runtime_enabled: true
+        init_data:
+            instance:
+                destinations:
+                    - Authentication: NoAuthentication
+                      Name: ui5
+                      ProxyType: Internet
+                      Type: HTTP
+                      URL: https://ui5.sap.com
+                    - Authentication: NoAuthentication
+                      Name: businesspartnervalidation-srv
+                      ProxyType: Internet
+                      Type: HTTP
+                      URL: https://s4-new-businesspartnervalidation-srv-cl.c-835c50f.stage.kyma.ondemand.com
+                      HTML5.DynamicDestination: true
+                      HTML5.ForwardAuthToken: true
+                existing_destinations_policy: update
+        version: 1.0.0
+    fullnameOverride: businesspartnervalidation-dest
+businesspartnervalidation-ems:
+    serviceOfferingName: enterprise-messaging
+    servicePlanName: default
+    parameters:
+        emname: bpems
+        namespace: refapps/bpems/abc
+        options:
+            management: true
+            messagingrest: true
+            messaging: true
+        rules:
+            queueRules:
+                publishFilter:
+                - ${namespace}/*
+                subscribeFilter:
+                - ${namespace}/*
+            topicRules:
+                publishFilter:
+                - ${namespace}/*
+                subscribeFilter:
+                - ${namespace}/*
+        version: 1.1.0
+    fullnameOverride: businesspartnervalidation-ems
+businesspartnervalidation-html5-repo-host:
+    serviceOfferingName: html5-apps-repo
+    servicePlanName: app-host
+    fullnameOverride: businesspartnervalidation-html5-repo-host
+# businesspartnervalidation-logs:
+#     serviceOfferingName: application-logs
+#     servicePlanName: lite
+#     fullnameOverride: businesspartnervalidation-logs
+businesspartnervalidation-srv:
+    resources:
+        limits:
+            memory: 256Mi
+        requests:
+            cpu: 63m
+            memory: 256Mi
+    env:
+        exit: "1"
+    bindings:
+        businesspartnervalidation-cs:
+            serviceInstanceFullname: businesspartnervalidation-cs
+        businesspartnervalidation-db:
+            serviceInstanceFullname: businesspartnervalidation-db
+        businesspartnervalidation-dest:
+            serviceInstanceFullname: businesspartnervalidation-dest
+        businesspartnervalidation-ems:
+            serviceInstanceFullname: businesspartnervalidation-ems
+        # businesspartnervalidation-logs:
+        #     serviceInstanceFullname: businesspartnervalidation-logs
+        businesspartnervalidation-xsuaa:
+            serviceInstanceFullname: businesspartnervalidation-xsuaa
+    health:
+        liveness:
+            path: /
+        readiness:
+            path: /
+    image:
+        repository: s700136/kyma-srv
+        tag: latest
+businesspartnervalidation-xsuaa:
+    serviceOfferingName: xsuaa
+    servicePlanName: application
+    parameters:
+        role-templates:
+            - description: uaa
+              name: token_exchange
+              scope-references:
+                - uaa.user
+        scopes:
+            - description: uaa
+              name: uaa.user
+        tenant-mode: dedicated
+        xsappname: businesspartnervalidation
+    fullnameOverride: businesspartnervalidation-xsuaa
+db:
+    resources:
+        limits:
+            memory: 128Mi
+        requests:
+            cpu: 32m
+            memory: 128Mi
+    bindings:
+        businesspartnervalidation-db:
+            serviceInstanceFullname: businesspartnervalidation-db
+    image:
+        repository: s700136/kyma-db
+        tag: latest
+kyma-s4-html5-app-deployer:
+    resources:
+        limits:
+            memory: 1G
+        requests:
+            cpu: 250m
+            memory: 1G
+    bindings:
+        businesspartnervalidation-dest:
+            serviceInstanceFullname: businesspartnervalidation-dest
+        businesspartnervalidation-html5-repo-host:
+            serviceInstanceFullname: businesspartnervalidation-html5-repo-host
+        businesspartnervalidation-xsuaa:
+            serviceInstanceFullname: businesspartnervalidation-xsuaa
+    image:
+        repository: s700136/html-deployer
+        tag: 0.1

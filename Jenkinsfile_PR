@@ -46,7 +46,7 @@ node{
 					sh "cf login -a ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.apiEndpoint} -u $USERNAME -p $PASSWORD -o ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.org} -s ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.space}"
 				}
 				sh '''
-					appId=`cf app BusinessPartnerValidation-srv --guid`
+					appId=`cf app businesspartnervalidation-srv --guid`
 					`cf curl /v2/apps/$appId/env > tests/rest-api/testscripts/util/appEnv.json`
 					npm install --only=dev
 					npm run-script test:rest-api
@@ -56,7 +56,7 @@ node{
     
  		stage('Undeploy'){
 			sh'''
-		   		cf delete BusinessPartnerValidation-srv-mocks -f
+		   		cf delete businesspartnervalidation-srv-mocks -f
 		   		echo 'y' | cf undeploy BusinessPartnerValidation
 		   	'''
 		 

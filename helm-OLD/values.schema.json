@@ -1,0 +1,63 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": [
+        "businesspartnervalidation-srv",
+        "db",
+        "kyma-s4-html5-app-deployer"
+    ],
+    "properties": {
+        "businesspartnervalidation-srv": {
+            "type": "object",
+            "required": [
+                "image"
+            ],
+            "properties": {
+                "image": {
+                    "type": "object",
+                    "required": [
+                        "repository",
+                        "tag"
+                    ],
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "db": {
+            "type": "object",
+            "required": [
+                "image"
+            ],
+            "properties": {
+                "image": {
+                    "type": "object",
+                    "required": [
+                        "repository",
+                        "tag"
+                    ],
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "kyma-s4-html5-app-deployer": {
+            "type": "object",
+            "required": [
+                "image"
+            ],
+            "properties": {
+                "image": {
+                    "type": "object",
+                    "required": [
+                        "repository",
+                        "tag"
+                    ],
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "additionalProperties": true
+}

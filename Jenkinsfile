@@ -48,7 +48,7 @@ node{
 					sh "cf login -a ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.apiEndpoint} -u $USERNAME -p $PASSWORD -o ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.org} -s ${commonPipelineEnvironment.configuration.steps.cloudFoundryDeploy.cloudFoundry.space}"
 				}
 				sh '''
-					appId=`cf app BusinessPartnerValidation-srv --guid`
+					appId=`cf app businesspartnervalidation-srv --guid`
 					`cf curl /v2/apps/$appId/env > tests/rest-api/testscripts/util/appEnv.json`
 					npm install --only=dev
 					npm run-script test:rest-api
@@ -72,7 +72,7 @@ node{
 		
 		}
 	   	stage('Undeploy'){
-			cloudFoundryDeleteApp (script: this, btpCredentialsId: 'pusercf', orgName: 'SA0176014160_refapps-cicd', spaceName: 'CICD_s4ext', btpRegion: 'eu10', appName: 'BusinessPartnerValidation-srv-mocks')
+			cloudFoundryDeleteApp (script: this, btpCredentialsId: 'pusercf', orgName: 'SA0176014160_refapps-cicd', spaceName: 'CICD_s4ext', btpRegion: 'eu10', appName: 'businesspartnervalidation-srv-mocks')
 			cloudFoundryUndeploy (script: this, btpCredentialsId: 'pusercf', orgName: 'SA0176014160_refapps-cicd', spaceName: 'CICD_s4ext', btpRegion: 'eu10', appName: 'BusinessPartnerValidation')
 			}
 	}

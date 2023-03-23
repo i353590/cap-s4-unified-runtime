@@ -47,7 +47,7 @@
                 "[production]": {
                     "kind": "enterprise-messaging-shared",
                     "queue": {
-                        "name": "refapps/bpems/abc/BusinessPartnerValidation-srv/1234"
+                        "name": "refapps/bpems/abc/businesspartnervalidation-srv/1234"
                     },
                     "publishPrefix": "$namespace/",
                     "subscribePrefix": "$namespace/"

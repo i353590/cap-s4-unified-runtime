@@ -1,0 +1,33 @@
+dependencies:
+- name: web-application
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.12.0
+- name: content-deployment
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.5.0
+- name: content-deployment
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.5.0
+- name: service-instance
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.3.2
+- name: service-instance
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.3.2
+- name: service-instance
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.3.2
+- name: service-instance
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.3.2
+- name: service-instance
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.3.2
+- name: service-instance
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.3.2
+- name: service-instance
+  repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+  version: 0.3.2
+digest: sha256:417a1e14d44f7cfb1432eb0b9ed6f9918f55c719ea68f2120e3f78a3d0c9f34e
+generated: "2023-03-09T18:22:07.369451+05:30"

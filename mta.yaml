@@ -1,113 +1,124 @@
 _schema-version: "3.1"
-ID: BusinessPartnerValidation
-description: A simple CAP project.
+ID: businesspartnervalidation
+description: a simple cap project.
 version: 1.0.0
 modules:
-  - name: BusinessPartnerValidation-srv
+  - name: businesspartnervalidation-srv
     type: nodejs
     path: gen/srv
     properties:
-      EXIT: 1
+      exit: 1
     requires:
-      - name: BusinessPartnerValidation-db
-      - name: BusinessPartnerValidation-xsuaa
-      - name: BusinessPartnerValidation-dest
-      - name: BusinessPartnerValidation-ems
-      - name: BusinessPartnerValidation-cs
-      - name: BusinessPartnerValidation-logs
+      - name: businesspartnervalidation-db
+      - name: businesspartnervalidation-xsuaa
+      - name: businesspartnervalidation-dest
+      - name: businesspartnervalidation-ems
+      - name: businesspartnervalidation-cs
+      - name: businesspartnervalidation-logs
     provides:
       - name: srv_api
         properties:
           srv-url: ${default-url}
     parameters:
-      memory: 256MB
+      memory: 256mb
   - name: db
     type: hdb
     path: gen/db
     requires:
-      - name: BusinessPartnerValidation-db
+      - name: businesspartnervalidation-db
     parameters:
-      app-name: BusinessPartnerValidation-db
-      memory: 128MB
-  - name: BusinessPartnerValidation-launchpad
-    type: com.sap.application.content
+      app-name: businesspartnervalidation-db
+      memory: 128mb
+  # - name: businesspartnervalidation-launchpad
+  #   type: com.sap.application.content
+  #   requires:
+  #     - name: businesspartnervalidation-xsuaa
+  #       parameters:
+  #         service-key:
+  #           name: businesspartnervalidation-xsuaa-key
+  #     - name: businesspartnervalidation-html5-repo-host
+  #       parameters:
+  #         service-key:
+  #           name: businesspartnervalidation-html5-repo-host-key
+  #     - name: srv_api
+  #     - name: businesspartnervalidation-dest
+  #       parameters:
+  #         content-target: true
+  #   parameters:
+  #     content:
+  #       instance:
+  #         destinations:
+  #           - authentication: oauth2usertokenexchange
+  #             name: businesspartnervalidation-srv
+  #             tokenserviceinstancename: businesspartnervalidation-xsuaa
+  #             tokenservicekeyname: businesspartnervalidation-xsuaa-key
+  #             url: ~{srv_api/srv-url}
+  #             sap.cloud.service: com.sap.bp.businesspartners.one
+  #           - name: businesspartnervalidation-html5-repo-host
+  #             serviceinstancename: businesspartnervalidation-html5-repo-host
+  #             servicekeyname: businesspartnervalidation-html5-repo-host-key
+  #             sap.cloud.service: com.sap.bp.businesspartners.one
+  #           - authentication: oauth2usertokenexchange
+  #             name: businesspartnervalidation-xsuaa
+  #             serviceinstancename: businesspartnervalidation-xsuaa
+  #             servicekeyname: businesspartnervalidation-xsuaa-key
+  #             sap.cloud.service: com.sap.bp.businesspartners.one
+  #         existing_destinations_policy: update
+  #   build-parameters:
+  #     no-source: true
+  - name: kyma-s4-html5-app-deployer
+    type: com.sap.html5.application.content
+    path: kyma-s4-html5-app-deployer
     requires:
-      - name: BusinessPartnerValidation-xsuaa
-        parameters:
-          service-key:
-            name: BusinessPartnerValidation-xsuaa-key
-      - name: BusinessPartnerValidation-html5-repo-host
-        parameters:
-          service-key:
-            name: BusinessPartnerValidation-html5-repo-host-key
-      - name: srv_api
-      - name: BusinessPartnerValidation-dest
+      - name: businesspartnervalidation-html5-repo-host
+      - name: businesspartnervalidation-xsuaa
+      - name: businesspartnervalidation-dest
         parameters:
           content-target: true
-    parameters:
-      content:
-        instance:
-          destinations:
-            - Authentication: OAuth2UserTokenExchange
-              Name: BusinessPartnerValidation-srv
-              TokenServiceInstanceName: BusinessPartnerValidation-xsuaa
-              TokenServiceKeyName: BusinessPartnerValidation-xsuaa-key
-              URL: ~{srv_api/srv-url}
-              sap.cloud.service: com.sap.bp.BusinessPartners.one
-            - Name: BusinessPartnerValidation-html5-repo-host
-              ServiceInstanceName: BusinessPartnerValidation-html5-repo-host
-              ServiceKeyName: BusinessPartnerValidation-html5-repo-host-key
-              sap.cloud.service: com.sap.bp.BusinessPartners.one
-            - Authentication: OAuth2UserTokenExchange
-              Name: BusinessPartnerValidation-xsuaa
-              ServiceInstanceName: BusinessPartnerValidation-xsuaa
-              ServiceKeyName: BusinessPartnerValidation-xsuaa-key
-              sap.cloud.service: com.sap.bp.BusinessPartners.one
-          existing_destinations_policy: update
     build-parameters:
-      no-source: true
-
-  - name: BusinessPartnerValidation-app-content
-    type: com.sap.application.content
-    path: .
-    requires:
-      - name: BusinessPartnerValidation-html5-repo-host
-        parameters:
-          content-target: true
-    build-parameters:
-      build-result: resources
+      timeout: 20m
+#      - name: srv_api
+  # - name: businesspartnervalidation-app-content
+  #   type: com.sap.application.content
+  #   path: .
+  #   requires:
+  #     - name: businesspartnervalidation-html5-repo-host
+  #       parameters:
+  #         content-target: true
+  #   build-parameters:
+  #     build-result: resources
       requires:
-        - artifacts:
-            - comsapbpBusinessPartners.zip
-          name: comsapbpBusinessPartners
-          target-path: resources/
+        - name: comsapbpbusinesspartners
+          artifacts:
+            - './*'
+          target-path: resources/comsapbpbusinesspartners
 
-  - name: comsapbpBusinessPartners
-    type: html5
-    path: app/BusinessPartners
-    build-parameters:
-      build-result: dist
-      builder: custom
-      commands:
-        - npm install
-        - npm run build
-      supported-platforms: []
+  # - name: comsapbpbusinesspartners
+  #   type: html5
+  #   path: app/businesspartners
+  #   build-parameters:
+  #     build-result: dist
+  #     builder: custom
+  #     commands:
+  #       - npm install
+  #       - npm run build
+  #     supported-platforms: []
 
  
- # - name: BusinessPartnerValidation-ui
+ # - name: businesspartnervalidation-ui
  #   type: html5
-  #  path: app/BusinessPartners
+  #  path: app/businesspartners
   #  parameters:
-  #    disk-quota: 1024MB
-  #    memory: 128MB
+  #    disk-quota: 1024mb
+  #    memory: 128mb
   #  build-parameters:
   #    builder: npm
   #    supported-platforms: []
   #    build-result: dist
 
  #   requires:
- #    - name: BusinessPartnerValidation-dest # <-- Destination Service
- #     - name: BusinessPartnerValidation-xsuaa # <-- User Authentication and Authorization
+ #    - name: businesspartnervalidation-dest # <-- destination service
+ #     - name: businesspartnervalidation-xsuaa # <-- user authentication and authorization
   #    - name: srv_api
    #     group: destinations
     #    properties:
@@ -116,61 +127,71 @@ modules:
 
 
 resources:
-  - name: BusinessPartnerValidation-db
+  - name: businesspartnervalidation-db
     type: com.sap.xs.hdi-container
     parameters:
       service: hana
       service-plan: hdi-shared
     properties:
       hdi-service-name: ${service-name}
-  - name: BusinessPartnerValidation-xsuaa
+  - name: businesspartnervalidation-xsuaa
     type: org.cloudfoundry.managed-service
     parameters:
-      path: ./xs-security.json
       service: xsuaa
       service-plan: application
-  - name: BusinessPartnerValidation-dest
+      config:
+        xsappname: 'businesspartnervalidation'
+        tenant-mode: dedicated
+        scopes:
+          - name: uaa.user
+            description: uaa
+        role-templates:
+          - name: token_exchange
+            description: uaa
+            scope-references:
+              - uaa.user
+  - name: businesspartnervalidation-dest
     type: org.cloudfoundry.managed-service
     parameters:
       config:
-        HTML5Runtime_enabled: true
+        html5runtime_enabled: true
         init_data:
           instance:
             destinations:
-              - Authentication: NoAuthentication
-                Name: ui5
-                ProxyType: Internet
-                Type: HTTP
-                URL: https://ui5.sap.com
+              - authentication: noauthentication
+                name: ui5
+                proxytype: internet
+                type: http
+                url: https://ui5.sap.com
             existing_destinations_policy: update
         version: 1.0.0
       service: destination
       service-plan: lite
-  - name: BusinessPartnerValidation-ems
+  - name: businesspartnervalidation-ems
     type: org.cloudfoundry.managed-service
     parameters:
       path: ./em.json
       service: enterprise-messaging
       service-plan: default
-  - name: BusinessPartnerValidation-cs
+  - name: businesspartnervalidation-cs
     type: org.cloudfoundry.managed-service
     parameters:
       service: connectivity
       service-plan: lite
-  - name: BusinessPartnerValidation-logs
+  - name: businesspartnervalidation-logs
     type: org.cloudfoundry.managed-service
     parameters:
       service: application-logs
       service-plan: lite
 
-  # HTML5 Repo Runtime
-  #- name: BusinessPartnerValidation_html5_repo-runtime
+  # html5 repo runtime
+  #- name: businesspartnervalidation_html5_repo-runtime
   #parameters:
   # service-plan: app-runtime
   #service: html5-apps-repo
   #type: org.cloudfoundry.managed-service
 
-  - name: BusinessPartnerValidation-html5-repo-host
+  - name: businesspartnervalidation-html5-repo-host
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
