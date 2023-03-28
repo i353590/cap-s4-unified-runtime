@@ -1,0 +1,19 @@
+apiVersion: services.cloud.sap.com/v1alpha1
+kind: ServiceInstance
+metadata:
+  name: businesspartnervalidation-cs
+spec:
+  serviceOfferingName: connectivity
+  servicePlanName: connectivity_proxy
+  externalName: connectivity_proxy-instance
+
+---
+
+apiVersion: services.cloud.sap.com/v1alpha1
+kind: ServiceBinding
+metadata:
+  name: businesspartnervalidation-cs
+spec:
+  serviceInstanceName: businesspartnervalidation-cs
+  externalName: businesspartnervalidation-cs
+  secretName: businesspartnervalidation-cs

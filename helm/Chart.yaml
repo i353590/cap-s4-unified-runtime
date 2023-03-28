@@ -43,12 +43,12 @@ dependencies:
       alias: businesspartnervalidation-ems
       tags:
         - service-instance
-    - name: service-instance
-      version: '>0.0.0'
-      repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
-      alias: businesspartnervalidation-cs
-      tags:
-        - service-instance
+    # - name: service-instance
+    #   version: '>0.0.0'
+    #   repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/
+    #   alias: businesspartnervalidation-cs
+    #   tags:
+    #     - service-instance
     # - name: service-instance
     #   version: '>0.0.0'
     #   repository: https://int.repositories.cloud.sap/artifactory/virtual-unified-runtime-helm-dmz/

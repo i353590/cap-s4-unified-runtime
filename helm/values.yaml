@@ -1,9 +1,9 @@
 tags:
     service-instance: true
-businesspartnervalidation-cs:
-    serviceOfferingName: connectivity
-    servicePlanName: connectivity_proxy
-    fullnameOverride: businesspartnervalidation-cs
+# businesspartnervalidation-cs:
+#     serviceOfferingName: connectivity
+#     servicePlanName: connectivity_proxy
+#     fullnameOverride: businesspartnervalidation-cs
 businesspartnervalidation-db:
     serviceOfferingName: hana
     servicePlanName: hdi-shared
@@ -69,11 +69,32 @@ businesspartnervalidation-srv:
         requests:
             cpu: 63m
             memory: 256Mi
+    additionalVolumes:
+    - name: connectivity-secret
+      volumeMount:
+        mountPath: /bindings/connectivity
+        readOnly: true
+      projected:
+        sources:
+          - secret:
+              name: businesspartnervalidation-cs
+              optional: false
+          - secret:
+              name: businesspartnervalidation-cs
+              optional: false
+              items:
+                - key: token_service_url
+                  path: url
+          - configMap:
+              name: s4-new-connectivity-proxy-info
+              optional: false
     env:
         exit: "1"
     bindings:
-        businesspartnervalidation-cs:
-            serviceInstanceFullname: businesspartnervalidation-cs
+        # connectivity-proxy:
+        #     fromSecret: businesspartnervalidation-cs
+        # businesspartnervalidation-cs:
+        #     serviceInstanceFullname: businesspartnervalidation-cs
         businesspartnervalidation-db:
             serviceInstanceFullname: businesspartnervalidation-db
         businesspartnervalidation-dest:

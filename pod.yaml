@@ -1,0 +1,87 @@
+Name:         s4-new-businesspartnervalidation-srv-844dd77d7c-vgprc
+Namespace:    cl
+Priority:     0
+Node:         ip-10-250-2-179.eu-central-1.compute.internal/10.250.2.179
+Start Time:   Mon, 27 Mar 2023 11:39:29 +0530
+Labels:       app.kubernetes.io/instance=s4-new
+              app.kubernetes.io/name=businesspartnervalidation-srv
+              pod-template-hash=844dd77d7c
+Annotations:  cni.projectcalico.org/containerID: fcc0252dd79fe387d573f18625b4975b8d635c08fbaf83a911b82c27e1985ee7
+              cni.projectcalico.org/podIP: 100.64.0.34/32
+              cni.projectcalico.org/podIPs: 100.64.0.34/32
+              container.apparmor.security.beta.kubernetes.io/businesspartnervalidation-srv: runtime/default
+Status:       Running
+IP:           100.64.0.34
+IPs:
+  IP:           100.64.0.34
+Controlled By:  ReplicaSet/s4-new-businesspartnervalidation-srv-844dd77d7c
+Containers:
+  businesspartnervalidation-srv:
+    Container ID:   containerd://32162acf9b0200df5c2754cf3b676e9890c05c485fcdd9275c198c17741d86c7
+    Image:          s700136/kyma-srv:latest
+    Image ID:       docker.io/s700136/kyma-srv@sha256:e7554391c024a011042847cbabaf9e9c600053fbe83340a66db689c9f9c2c514
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Mar 2023 11:47:53 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:      63m
+      memory:   256Mi
+    Liveness:   http-get http://:http/ delay=0s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:http/ delay=0s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:http/ delay=0s timeout=1s period=2s #success=1 #failure=15
+    Environment:
+      SERVICE_BINDING_ROOT:     /bindings
+      PORT:                     8080
+      TMPDIR:                   /tmp
+      exit:                     1
+      APPLICATION_NAME:         s4-new-businesspartnervalidation-srv
+      APPLICATION_URI:          s4-new-businesspartnervalidation-srv
+      KUBERNETES_SERVICE_HOST:  api.d6ddf18.kyma.internal.live.k8s.ondemand.com
+    Mounts:
+      /bindings from bindings-root (rw)
+      /bindings/businesspartnervalidation-db/ from businesspartnervalidation-db (ro)
+      /bindings/businesspartnervalidation-dest/ from businesspartnervalidation-dest (ro)
+      /bindings/businesspartnervalidation-ems/ from businesspartnervalidation-ems (ro)
+      /bindings/businesspartnervalidation-xsuaa/ from businesspartnervalidation-xsuaa (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+  bindings-root:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+  businesspartnervalidation-db:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  s4-new-businesspartnervalidation-srv-businesspartnervalidation-db
+    Optional:    false
+  businesspartnervalidation-dest:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  s4-new-businesspartnervalidation-srv-businesspartnervalidation-dest
+    Optional:    false
+  businesspartnervalidation-ems:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  s4-new-businesspartnervalidation-srv-businesspartnervalidation-ems
+    Optional:    false
+  businesspartnervalidation-xsuaa:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  s4-new-businesspartnervalidation-srv-businesspartnervalidation-xsuaa
+    Optional:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:          <none>

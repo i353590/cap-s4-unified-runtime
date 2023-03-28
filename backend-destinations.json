@@ -5,7 +5,7 @@
         "Type": "HTTP",
         "ProxyType": "Internet",
         "Authentication": "NoAuthentication",
-        "URL": "https://s4-new-businesspartnervalidation-srv-cl.c-835c50f.stage.kyma.ondemand.com",
+        "URL": "https://s4-new-businesspartnervalidation-srv-cl.d6ddf18.kyma.ondemand.com",
         "HTML5.ForwardAuthToken": true,
         "strictSSL": true,
         "sap.cloud.service": "com.sap.bp.BusinessPartners.one"
