@@ -1,165 +1,325 @@
-# S/4 HANA Extend Business Process Scenario
-[![Develop Build Status](https://gkerefappscicd.jaas-gcp.cloud.sap.corp/buildStatus/icon?job=cloud-cap-s4ems-bp)](https://gkerefappscicd.jaas-gcp.cloud.sap.corp/job/cloud-cap-s4ems-bp/)
-## Description
-The main intent of this scenario is to complement an existing business process in an SAP solution – currently SAP S/4HANA with additional business process steps. This involves adding major logic and/or additional data and goes beyond simple UI changes.
+#S/4 Business Logic Extn Scenario – Migration to Unified Runtime  
 
-This application showcases:
+   
 
-- Building application on SAP Cloud Platform(CP) using [SAP Cloud Application Programming Model(CAP)](https://cap.cloud.sap/docs/)
-- Consuming Events from S/4 HANA on premise using [SAP CP Enterprise Messaging](https://help.sap.com/viewer/bf82e6b26456494cbdd197057c09979f/Cloud/en-US/df532e8735eb4322b00bfc7e42f84e8d.html)
-- Consuming REST API's from S/4 HANA on premise using SAP CP Connectivity Service
+Status: Migration is complete now and the app works as expected. 
 
-## Business Scenario
+   
 
-A business scenario is used to showcase how to build a S/4 HANA on premise extension Application on SAP CP.
+Steps to Migrate:  
 
-John who is an employee of Business Partner Validation Firm iCredible, which is a third-party vendor of ACME Corporation would like to get notifications whenever new Business Partners are added in the S/4 HANA backend system of ACME Corporation. John would then be able to review the Business Partner details in his extension app. He would proceed to visit the Business Partner’s registered office and do some background verification. John would then proceed to update/validate the verification details into the extension app. Once the details are verified, the Business Partner gets activated in the S/4 HANA system of ACME Corporation.
+   
 
-- Custom extension application that works independently from S/4 HANA.
+Clone https://github.com/SAP-samples/cloud-extension-s4hana-business-process  
 
-- Changes in S/4 communicated via events in real time to extension application.
+Follow steps : https://github.com/SAP-samples/cloud-extension-s4hana-business-process/blob/mission/mission/configure-oData-Service/README.md to configre Odata service and technical user creation  
 
-- Vendor personnel needs access to only custom app
+Setup connectivity : Setup connectivity between S/4HANA system, SAP BTP  
 
-## Architecture
+   
 
-### Solution Diagram
+Open terminal and run “mbt build -t ./”  
 
-![solution diagram](./documentation/images/solution-diagram-latest.png)
+In the root folder create a folder name as “kyma-s4-html5-app-deployer”  
 
-The Business Partner Validation application is developed using SAP Cloud Application programming Model (CAP) and runs and runs on the SAP Business Technology Platform Cloud Foundry Environment. It consumes platform services like Event Mesh, SAP HANA Cloud and Connectivity. The events generated in S/4 HANA on premise are inserted into the Event Mesh queue. The application running in Cloud Foundry polls the queue for these messages and inserts them into the SAP HANA Cloud database. The Business Partner Validation Application also uses S/4 HANA REST API's to read data from Business Partner Data from S/4 HANA system.
+Under the folder “kyma-s4-html5-app-deployer” create “package.json” file and add the below code  
 
-## Requirements
-* SAP S/4 Hana system.
-* SAP Business Technology Platform account
+{  
 
-### For local development you would require the following:
-* [Node js](https://nodejs.org/en/download/)
->Make sure you run the latest long-term support (LTS) version of Node.js with an even number like 16. Refrain from using odd versions, for which some modules with native parts will have no support and thus might even fail to install. In case of problems, see the [Troubleshooting guide](https://cap.cloud.sap/docs/advanced/troubleshooting#node-version) for CAP for more details.
-* [Cloud Foundry Command Line Interface (CLI)](https://github.com/cloudfoundry/cli#downloads)
-* [Visual Studio Code](https://cap.cloud.sap/docs/get-started/in-vscode)
-* [cds-dk](https://cap.cloud.sap/docs/get-started/)
-* [SQLite ](https://sqlite.org/download.html)
-* To build the multi target application, we need the [Cloud MTA Build tool](https://sap.github.io/cloud-mta-build-tool/), download the tool from [here](https://sap.github.io/cloud-mta-build-tool/download/)
-* For Windows system, install 'MAKE' from https://sap.github.io/cloud-mta-build-tool/makefile/
-* [multiapps plugin](https://github.com/cloudfoundry-incubator/multiapps-cli-plugin) - `cf install-plugin multiapps`  
-*  mbt -  `npm install -g mbt`
+    "name": "kyma-sf-html5-app-deployer",  
 
-### Entitlements
+    "version": "1.0.0",  
 
-The application requires below set of SAP Cloud Platform Entitlements/Quota
+    "dependencies": {  
 
-| Service                           | Plan       | Number of Instances |
-|-----------------------------------|------------|:-------------------:|
-| Event Mesh              | default    |          1          |
-| SAP HANA Schemas & HDI Containers | hdi-shared |          1          |
-| SAP Hana Cloud                   | hana       |          1          |
-| Application Runtime               |            |          1          |
+      "@sap/html5-app-deployer": "4.1.2"  
 
+    },  
 
-## Configuration
+    "scripts": {  
 
+      "start": "node node_modules/@sap/html5-app-deployer/index.js"  
 
-### Step 1: Setup Business Technology platform subaccount
+    }  
 
-You can use [SAP Business Technology Platform - Boosters](https://help.sap.com/viewer/DRAFT/65de2977205c403bbc107264b8eccf4b/Validation/en-US/fb1b56148f834749a2bf51127421610b.html) to setup the subaccount. Boosters Will create the subaccount with the required entitlements, subscriptions and assign the required roles to your user to run this application. Steps to run the booster are provided in [link](./documentation/mission/Prepare-Cloud-Platform/Booster.md). You can create subaccount manually also following [link](./documentation/mission/Prepare-Cloud-Platform/README.md)
+}  
 
-### Step 2: [S/4 HANA Enable OData Service for business partner](./documentation/mission/configure-oData-Service/README.md)
+   
 
-### Step 3: [Setup connectivity between S/4Hana system, SAP CP](./documentation/mission/cloud-connector/README.md)
+Copy the “resources” folder into the folder “kyma-s4-html5-app-deployer.”  
 
-### Step 4: Build and deploy the CAP application
+Make changes in the mta.yaml like below https://github.tools.sap/I307469/sf-unified-runtime/blob/main/mta.yaml  
 
-#### Steps to deploy locally
+IMPORTANT: Convert all the instances and application’s name to LOWERCASE as Kyma doesn’t support UPPERCASE characters.  
 
-- Open terminal in VSCode
-- Run `npm install sqlite3 --save-dev`
-- Run `cds watch`
+Connectivity service plan – lite not available, we need to use connectivity_proxy plan  
 
-#### Steps to deploy the application on CF
+Logging service is not available in kyma, it has to be removed from mta.  
 
-1. Build the application
-    `mbt build -p=cf `  
-2. Login to Cloud Foundry by typing the below commands on command prompt
-    ```
-    cf api <api>
-    cf login -u <username> -p <password>
-    ```
-    `api` - [URL of the Cloud Foundry landscape](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/350356d1dc314d3199dca15bd2ab9b0e.html) that you are trying to connect to.
+   
 
-    Select the org and space when prompted to. For more information on the same refer [link](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/75125ef1e60e490e91eb58fe48c0f9e7.html#loio4ef907afb1254e8286882a2bdef0edf4).
+Use bumblebee to transform the mta to helm like below “bee transform mta --registry <your_registry> --source mta.yaml --out helm –force”  
 
-3. Deploy the application
+Example: bee transform mta --registry s700136 --source mta.yaml --out helm –force  
 
-	Navigate to mta_archives folder and run the below command from CLI
+Note: s700136 is the registry name please use your own registry to create helm  
 
-   `cf deploy BusinessPartnerValidation_1.0.0.mtar`
+   
 
-### Step 5: [Configure event based communication between S4 and Event Mesh](https://help.sap.com/viewer/810dfd34f2cc4f39aa8d946b5204fd9c/1809.000/en-US/fbb2a5980cb54110a96d381e136e0dd8.html)
+Open values-dev.yaml under helm folder and add the below code  
 
+kyma-sf-html5-app-deployer:  
 
-## Demo script
+    env:  
 
-1. In the command line interface run the command `cf apps`
-   
-2. Find the URL for the app ` BusinessPartnerValidation-ui` - this is the launch URL for the Business Partner Validation application.
+        SAP_CLOUD_SERVICE : "com.sap.bp.BusinessPartners.one"  
 
-3. Launch the URL in a browser.
+        SUBACCOUNT_LEVEL_DESTINATION: "true"  
 
-4. Click on Business Partner Validation tile
-![fiori tile](./documentation/images/fioriLaunchpad.JPG)
+        BACKEND_DESTINATIONS:  
 
-5. The list of BusinessPartners along with their verification status gets displayed. 
-![BP list](./documentation/images/BPListView.JPG)
+            secretKeyRef:  
 
-6. Login to the S4 Hana on-premise system
+                name: backend-destinations  
 
-![S4 login](./documentation/images/GuiLogin.JPG)
+                key: BACKEND_DESTINATIONS  
 
-7. Enter transaction code 'bp'
-![bp transaction](./documentation/images/BPtransaction.JPG)
+Add the parameters for Enterprise messaging service like below  
 
-8. Click on Person
-![person](./documentation/images/person.png)
+epm:  
 
-9. Provide first name, last name for the business partner
-![name](./documentation/images/name.png)
+    parameters:  
 
-10. Provide the address
-![address](./documentation/images/bpaddress.png)
+        emname: bpems  
 
-11. Move to the status tab and check mark the 'Central Block' lock. Save the BP. This will create a new Business Partner 
-![lock](./documentation/images/lock.png)
+        namespace: refapps/bpems/abc  
 
-12. Now go back to the BusinessPartnerValidation application to see if the new BusinessPartners has come on the UI
-![new bp](./documentation/images/bpNew.png)
+        options:  
 
-13. Go to the details page for the new BusinessPartner. Click on edit.
-![edit bp](./documentation/images/editBP.png)
+            management: true  
 
-14. Change the Verification Status to VERIFIED. You can also edit the street name, postal code also if needed. Save the data. 
+            messagingrest: true  
 
-![edit values](./documentation/images/editValue.png)
+            messaging: true  
 
-15. Open S4 Hana system, bp transaction. Search for the newly created bp
-![search bp](./documentation/images/searchBP.png)
+        rules:  
 
-16.Double click on the BP
-![click bp](./documentation/images/clickBP.png)
+            queueRules:  
 
-17. You can see that the central Block lock has been removed 
-![release lock](./documentation/images/releasedLock.png)
+                publishFilter:  
 
+                - ${namespace}/*  
 
-19. You can notice that in the BusinessPartner Validation UI, the status is now set as COMPLETED.
+                subscribeFilter:  
 
-## Known Issues
+                - ${namespace}/*  
 
-No known issues.
+            topicRules:  
 
-## How to Obtain Support
+                publishFilter:  
 
-In case you find a bug, or you need additional support, please open an issue here in GitHub.
+                - ${namespace}/*  
 
-## License
-Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved. This file is licensed under the Apache Software License, version 2.0 except as noted otherwise in the [LICENSE](LICENSE) file.
+                subscribeFilter:  
+
+                - ${namespace}/*  
+
+        version: 1.1.0  
+
+   
+
+   
+
+   
+
+login to your kyma and create secret for binding to your service layer  
+
+ Note: create namespace for “s4”  
+
+ Example : https://github.tools.sap/I307469/sf-unified-runtime/blob/main/secrets/backend-destinations.json  
+
+   
+
+run the below command to create secret : kubectl create  secret generic backend-destinations --from-file=BACKEND_DESTINATIONS=./secrets/backend-destinations.json -n <namespace>  
+
+Example: kubectl create  secret generic backend-destinations --from-file=BACKEND_DESTINATIONS=./secrets/backend-destinations.json -n cl  
+
+note: cl is my namespace  
+
+   
+
+Application logging service is not available in Kyma – Have to be removed.  
+
+Connectivity service plan ‘lite’ is not available in Kyma – Needs to be changed to “connectivity_proxy”. Also, Connectivity Service should be only one per cluster, so that needs to be taken care as well. Create a connectivity instnace, then create a binding manually. 
+
+I have used the name as businesspartnervalidation-cs for both the instance and binding. Moments after the binding is created, a secret will also be created with same name of that binding. 
+
+Create a file to create a configMap to use connectivity proxy. 
+
+		Example:  
+
+ 
+
+apiVersion: v1 
+
+kind: ConfigMap 
+
+metadata: 
+
+name: s4-new-connectivity-proxy-info 
+
+namespace: cl 
+
+data: 
+
+.metadata: >- 
+
+{"credentialProperties":[{"name":"subaccount_id","format":"text"},{"name":"subaccount_subdomain","format":"text"},{"name":"token_service_domain","format":"text"},{"name":"token_service_url","format":"text"},{"name":"token_service_url_pattern","format":"text"},{"name":"token_service_url_pattern_tenant_key","format":"text"},{"name":"clientid","format":"text"},{"name":"credential-type","format":"text"},{"name":"xsappname","format":"text"},{"name":"clientsecret","format":"text"},{"name":"connectivity_service","format":"json"},{"name":"onpremise_proxy_host","format":"text"},{"name":"onpremise_proxy_http_port","format":"text"},{"name":"onpremise_proxy_host","format":"text"},{"name":"url","format":"text"}],"metaDataProperties":[{"name":"instance_name","format":"text"},{"name":"instance_guid","format":"text"},{"name":"plan","format":"text"},{"name":"label","format":"text"},{"name":"type","format":"text"},{"name":"tags","format":"json"}]} 
+
+onpremise_proxy_host: connectivity-proxy.kyma-system.svc.cluster.local 
+
+onpremise_proxy_http_port: "20003" 
+
+onpremise_proxy_ldap_port: "20001" 
+
+onpremise_proxy_port: "20003" 
+
+onpremise_proxy_rfc_port: "20001" 
+
+onpremise_socks5_proxy_port: "20004" 
+
+ 
+
+Note: The ‘name’ field in the file is the configmap name which we will pass in the values.yaml file. 
+
+ 
+
+ Update the values.yaml file like this under srv application: 
+
+ 
+
+additionalVolumes: 
+
+- name: connectivity-secret 
+
+volumeMount: 
+
+mountPath: /bindings/connectivity 
+
+readOnly: true 
+
+projected: 
+
+sources: 
+
+- secret: 
+
+name: businesspartnervalidation-cs 
+
+optional: false 
+
+- secret: 
+
+name: businesspartnervalidation-cs 
+
+optional: false 
+
+items: 
+
+- key: token_service_url 
+
+path: url 
+
+- configMap: 
+
+name: s4-new-connectivity-proxy-info 
+
+optional: false 
+
+ 
+
+Note: ‘connectivity-secret’ is my secret name and ‘s4-new-connectivity-proxy-info' is the configmap name we created earlier. 
+
+HANA instance mapping to Kyma: MAP HANA instance to Kyma so that we can create db instances in Kyma cluster. 
+
+now run “helm dependency update ./helm” to update the dependencies. 
+
+deploy the helm by running the below command “helm install s4-unified ./helm --values helm/values-dev.yaml --namespace cl”  
+
+note: if above command doesn’t work then make changes like below file to deploy : https://github.tools.sap/I307469/sf-unified-runtime/blob/main/helm/values.yaml  
+
+   
+
+Configure event communication between S/4 and Event Mesh: https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/810dfd34f2cc4f39aa8d946b5204fd9c/fbb2a5980cb54110a96d381e136e0dd8.html?version=1809.000  
+
+Configure Cloud connector: https://github.com/SAP-samples/cloud-extension-s4hana-business-process/blob/mission/mission/cloud-connector/README.md  
+
+   
+
+to run the demo please follow this : https://github.com/SAP-samples/cloud-extension-s4hana-business-process/blob/mission/mission/testbasicscenario/README.md  
+
+   
+
+   
+
+   
+
+Issues:  
+
+   
+
+https://github.tools.sap/unified-runtime/bumblebee/blob/ea1349f13985e4eb76a21a50bd27aa2273b10cd5/pkg/helm/manifest.go#L296 – Mb to Mi Bee doesn’t do.  
+
+Need to make sure that the mta has the unit as ‘M’ like this - https://github.tools.sap/unified-runtime/bumblebee/blob/f8f17a9dbe404197fd27e9ac4cf74b4d4ff3f707/examples/simple-mta/mta.yaml#L48  
+
+   
+
+Type in mta is not supported : type: com.sap.application.content  
+
+It should be replaced with :  type: com.sap.html5.application.content  
+
+But for kyma need more changes in mta where cf deployment is different from kyma deployment like below after creating html5-deployer  
+
+  - name: kyma-s4-html5-app-deployer  
+
+type: com.sap.html5.application.content  
+
+path: kyma-s4-html5-app-deployer  
+
+requires:  
+
+- name: businesspartnervalidation-html5-repo-host  
+
+- name: businesspartnervalidation-xsuaa  
+
+- name: businesspartnervalidation-dest  
+
+parameters:  
+
+content-target: true  
+
+build-parameters:  
+
+timeout: 20m  
+
+requires:  
+
+- name: comsapbpbusinesspartners  
+
+artifacts:  
+
+- './*'  
+
+target-path: resources/comsapbpbusinesspartners  
+
+  
+
+   
+
+destination types are not supported so need to identify the deployed service url and create secret.  
+
+Note: URL property must be changed as per the kyma cluster  
+
+https://github.tools.sap/I307469/sf-unified-runtime/blob/main/secrets/backend-destinations.json  
+
+ 
